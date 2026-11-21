@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:3003";
+const API_URL = "";
 
 async function carregarDashboard() {
   try {
