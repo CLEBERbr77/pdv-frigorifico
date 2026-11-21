@@ -1,0 +1,56 @@
+-- Estrutura inicial do PDV (equivalente às migrations do Sequelize em src/database/migrations).
+
+CREATE TABLE IF NOT EXISTS categorias (
+  id SERIAL PRIMARY KEY,
+  nome VARCHAR(255) NOT NULL UNIQUE,
+  descricao VARCHAR(255),
+  "createdAt" TIMESTAMPTZ NOT NULL,
+  "updatedAt" TIMESTAMPTZ NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS produtos (
+  id SERIAL PRIMARY KEY,
+  nome VARCHAR(255) NOT NULL,
+  codigo_produto VARCHAR(255) NOT NULL UNIQUE,
+  codigo_barras VARCHAR(255) UNIQUE,
+  preco DECIMAL(10, 2) NOT NULL,
+  estoque DECIMAL(10, 3) NOT NULL DEFAULT 0,
+  ativo BOOLEAN NOT NULL DEFAULT TRUE,
+  "createdAt" TIMESTAMPTZ NOT NULL,
+  "updatedAt" TIMESTAMPTZ NOT NULL,
+  categoria_id INTEGER NOT NULL REFERENCES categorias (id) ON UPDATE CASCADE ON DELETE RESTRICT,
+  estoque_minimo DECIMAL(10, 3) NOT NULL DEFAULT 0,
+  unidade_medida VARCHAR(255) NOT NULL DEFAULT 'kg'
+);
+
+CREATE TABLE IF NOT EXISTS vendas (
+  id SERIAL PRIMARY KEY,
+  valor_total DECIMAL(10, 2) NOT NULL,
+  forma_pagamento VARCHAR(255) NOT NULL,
+  status VARCHAR(255) NOT NULL DEFAULT 'finalizada',
+  "createdAt" TIMESTAMPTZ NOT NULL,
+  "updatedAt" TIMESTAMPTZ NOT NULL,
+  valor_recebido DECIMAL(10, 2) NOT NULL DEFAULT 0,
+  troco DECIMAL(10, 2) NOT NULL DEFAULT 0
+);
+
+CREATE TABLE IF NOT EXISTS itens_venda (
+  id SERIAL PRIMARY KEY,
+  venda_id INTEGER NOT NULL REFERENCES vendas (id) ON UPDATE CASCADE ON DELETE RESTRICT,
+  produto_id INTEGER NOT NULL REFERENCES produtos (id) ON UPDATE CASCADE ON DELETE RESTRICT,
+  quantidade DECIMAL(10, 3) NOT NULL,
+  preco_unitario DECIMAL(10, 2) NOT NULL,
+  subtotal DECIMAL(10, 2) NOT NULL,
+  "createdAt" TIMESTAMPTZ NOT NULL,
+  "updatedAt" TIMESTAMPTZ NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS movimentacoes_estoque (
+  id SERIAL PRIMARY KEY,
+  produto_id INTEGER NOT NULL REFERENCES produtos (id) ON UPDATE CASCADE ON DELETE RESTRICT,
+  tipo VARCHAR(255) NOT NULL,
+  quantidade DECIMAL(10, 3) NOT NULL,
+  motivo VARCHAR(255),
+  "createdAt" TIMESTAMPTZ NOT NULL,
+  "updatedAt" TIMESTAMPTZ NOT NULL
+);
