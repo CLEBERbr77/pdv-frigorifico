@@ -1,0 +1,14 @@
+[build]
+  publish = "public"
+
+# A página inicial fica em public/pages/index.html, então a raiz do site
+# precisa ser reescrita para ela (senão o Netlify retorna 404 em "/").
+[[redirects]]
+  from = "/"
+  to = "/pages/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/index.html"
+  to = "/pages/index.html"
+  status = 200
